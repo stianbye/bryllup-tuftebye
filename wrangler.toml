@@ -1,0 +1,9 @@
+name = "bordplassering"
+compatibility_date = "2026-05-01"
+pages_build_output_dir = "./dist"
+
+# Env-variabler settes via Cloudflare-dashbordet (Settings → Environment variables):
+#   SUPABASE_URL = https://yukzyehkzovspbwqphmr.supabase.co
+#   SUPABASE_SERVICE_KEY = <service_role-token, fra Brukernavn og Passord.txt>
+#
+# For lokal utvikling: opprett .dev.vars med samme variabler + DEV_USER=byestianbye@gmail.com

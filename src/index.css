@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* TufteBye-palett — alltid mørkt tema */
+  :root {
+    /* Navy som bakgrunn */
+    --background: 224 38% 13%;        /* #141c2e */
+    --foreground: 39 36% 87%;          /* #EAE2D4 text */
+
+    --card: 220 39% 20%;               /* #1e2d45 navy-card */
+    --card-foreground: 39 36% 87%;
+
+    --popover: 224 41% 18%;            /* #1a2540 navy-mid */
+    --popover-foreground: 39 36% 87%;
+
+    /* Primær: gull */
+    --primary: 39 47% 57%;             /* #C4A060 */
+    --primary-foreground: 224 38% 13%; /* navy på gull */
+
+    --secondary: 224 41% 18%;          /* navy-mid */
+    --secondary-foreground: 39 36% 87%;
+
+    --muted: 224 41% 18%;
+    --muted-foreground: 210 14% 60%;   /* #8A9AA8 text-muted */
+
+    --accent: 220 39% 24%;
+    --accent-foreground: 39 36% 87%;
+
+    --destructive: 0 65% 48%;
+    --destructive-foreground: 39 36% 87%;
+
+    --border: 39 47% 57% / 0.25;       /* gull med alpha */
+    --input: 220 39% 24%;
+    --ring: 39 47% 57%;
+
+    --radius: 0.5rem;
+
+    /* Body-tekst alternativ */
+    --text-body: 35 17% 75%;           /* #C8C2B8 */
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    color: hsl(var(--text-body));
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-body { color: hsl(var(--text-body)); }
+  
