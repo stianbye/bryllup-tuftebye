@@ -73,7 +73,7 @@ export function conflictsForTable(
   // 4. Soft: kun én gruppe ved bord med 4+ gjester (men brudepar-bordet er unntak)
   if (guestsAtTable.length >= 4) {
     const groups = new Set(
-      guestsAtTable.map((g) => g.group_tag).filter((g): g is string => !!g && g !== 'brudepar')
+      guestsAtTable.map((g) => g.group_tag).filter((g): g is NonNullable<typeof g> => !!g && g !== 'brudepar')
     )
     if (groups.size === 1) {
       conflicts.push({

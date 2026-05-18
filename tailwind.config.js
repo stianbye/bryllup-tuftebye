@@ -3,66 +3,46 @@ export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
-    container: {
-      center: true,
-      padding: "1.5rem",
-      screens: { "2xl": "1400px" },
-    },
+    container: { center: true, padding: "1.5rem", screens: { "2xl": "1400px" } },
     extend: {
       colors: {
-        // shadcn-tokens (drevet av CSS-vars i index.css)
-        border: "hsl(var(--border))",
+        border: "hsl(var(--border) / <alpha-value>)",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        // TufteBye brand-tokens (eksplisitt for finkontroll)
-        navy: {
-          DEFAULT: "#141c2e",
-          mid: "#1a2540",
-          card: "#1e2d45",
-        },
-        gold: {
-          DEFAULT: "#C4A060",
-          light: "#D8BC84",
-          dark: "#A08448",
-        },
+        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+        popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+        navy: { DEFAULT: "#141c2e", mid: "#1a2540", card: "#1e2d45" },
+        gold: { DEFAULT: "#C4A060", light: "#D8BC84", dark: "#A08448" },
         platinum: "#C0CDD8",
-        // Gjeste-gruppefarger
-        guestpurple: "#7F77DD",
-        guestpink: "#D4537E",
-        guestblue: "#378ADD",
-        guestteal: "#1D9E75",
-        guestgold: "#C4A060",
       },
       fontFamily: {
         serif: ['"Playfair Display"', "serif"],
-        sans: ["Inter", "system-ui",
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "slide-up": {
+          from: { transform: "translateY(8px)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
+        "slide-up": "slide-up 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
+      },
+    },
+  },
+  plugins: [],
+}

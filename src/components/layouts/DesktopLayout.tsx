@@ -9,14 +9,8 @@ import {
   DragOverlay,
 } from '@dnd-kit/core'
 import {
-  Search,
-  Heart,
-  Wand2,
-  Printer,
-  Plus,
-  AlertCircle,
-  RotateCcw,
-  X,
+  Search, Heart, Wand2, Printer, Plus, AlertCircle, RotateCcw, X,
+  LayoutGrid, CircleDot,
 } from 'lucide-react'
 import { useWeddingStore } from '@/store/wedding'
 import { Button } from '@/components/ui/button'
@@ -26,10 +20,15 @@ import GuestDot from '@/components/shared/GuestDot'
 import DesktopTableCard from '@/components/desktop/DesktopTableCard'
 import DraggableGuest from '@/components/desktop/DraggableGuest'
 import GuestEditSheet from '@/components/mobile/GuestEditSheet'
+import RoundTable from '@/components/shared/RoundTable'
+import InsightsHero from '@/components/shared/InsightsHero'
 import { detectAllConflicts } from '@/lib/conflicts'
 import { autoPlace } from '@/lib/auto-place'
 import { groupLabel } from '@/lib/colors'
+import { cn } from '@/lib/utils'
 import type { Guest } from '@/types/database'
+
+type ViewMode = 'cards' | 'rooms'
 
 export default function DesktopLayout() {
   const {
@@ -42,6 +41,7 @@ export default function DesktopLayout() {
     resetAssignments,
   } = useWeddingStore()
   const [search, setSearch] = useState('')
+  const [view, setView] = useState<ViewMode>('cards')
   const [draggingGuest, setDraggingGuest] = useState<Guest | null>(null)
   const [editGuest, setEditGuest] = useState<Guest | null>(null)
   const [autoBusy, setAutoBusy] = useState(false)
@@ -73,7 +73,6 @@ export default function DesktopLayout() {
     if (!guest || !tableId.startsWith('table-')) return
     const realTableId = tableId.replace('table-', '')
     assignGuest(guestId, realTableId).then(() => {
-      // Tilby å flytte partner med
       if (guest.partner_of) {
         const partner = guests.find((g) => g.id === guest.partner_of)
         const partnerAssign = assignments.find((a) => a.guest_id === partner?.id)
@@ -103,19 +102,34 @@ export default function DesktopLayout() {
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="min-h-screen bg-background flex flex-col">
-        {/* Toolbar */}
-        <header className="border-b border-border bg-popover">
+        <header className="border-b border-border/40 bg-popover/70 backdrop-blur-md">
           <div className="px-6 py-3 flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <Heart className="h-5 w-5 text-primary fill-current" />
               <div>
-                <h1 className="font-serif text-base leading-tight">{wedding.name}</h1>
+                <h1 className="font-serif text-base leading-tight text-foreground">{wedding.name}</h1>
                 <p className="text-[11px] text-muted-foreground">22. august 2026</p>
               </div>
-              <div className="h-8 w-px bg-border" />
+              <div className="h-8 w-px bg-border/40" />
               <Progress placed={assignments.length} total={guests.length} className="w-44" />
             </div>
             <div className="flex items-center gap-2">
+              <div className="flex bg-secondary/40 rounded-md p-0.5 border border-border/40">
+                <button
+                  type="button"
+                  onClick={() => setView('cards')}
+                  className={cn('px-2 py-1 rounded text-xs flex items-center gap-1', view === 'cards' ? 'bg-primary/20 text-primary' : 'text-muted-foreground')}
+                >
+                  <LayoutGrid className="h-3 w-3" /> Liste
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView('rooms')}
+                  className={cn('px-2 py-1 rounded text-xs flex items-center gap-1', view === 'rooms' ? 'bg-primary/20 text-primary' : 'text-muted-foreground')}
+                >
+                  <CircleDot className="h-3 w-3" /> Bord-layout
+                </button>
+              </div>
               <VersionPill />
               <Button size="sm" variant="outline" onClick={handleAutoPlace} disabled={autoBusy}>
                 <Wand2 className="mr-2 h-3.5 w-3.5" /> Auto-forslag
@@ -134,11 +148,13 @@ export default function DesktopLayout() {
               </Button>
             </div>
           </div>
+          <div className="px-6 pb-3">
+            <InsightsHero layout="desktop" />
+          </div>
         </header>
 
         <div className="flex-1 grid grid-cols-[260px_1fr] overflow-hidden">
-          {/* Sidebar — uplasserte gjester */}
-          <aside className="border-r border-border bg-popover/50 overflow-y-auto scrollbar-thin">
+          <aside className="border-r border-border/40 bg-popover/30 overflow-y-auto scrollbar-thin">
             <div className="p-4 space-y-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -147,7 +163,7 @@ export default function DesktopLayout() {
                   placeholder="Søk gjest…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-secondary border border-border rounded-md pl-9 pr-3 py-1.5 text-sm"
+                  className="w-full bg-secondary/60 border border-border/40 rounded-md pl-9 pr-3 py-1.5 text-sm"
                 />
               </div>
               <p className="eyebrow">Uplassert · {unplaced.length}</p>
@@ -166,16 +182,10 @@ export default function DesktopLayout() {
                 )}
               </div>
 
-              <div className="pt-3 mt-3 border-t border-border">
+              <div className="pt-3 mt-3 border-t border-border/40">
                 <p className="eyebrow mb-2">Fargekode</p>
                 <ul className="space-y-1 text-[11px] text-muted-foreground">
-                  {[
-                    'brudepar',
-                    'familie_stian',
-                    'familie_laila',
-                    'venner_stian',
-                    'venner_laila',
-                  ].map((t) => (
+                  {['brudepar', 'familie_stian', 'familie_laila', 'venner_stian', 'venner_laila'].map((t) => (
                     <li key={t} className="flex items-center gap-2">
                       <GuestDot group={t as never} size={6} />
                       {groupLabel(t as never)}
@@ -185,17 +195,13 @@ export default function DesktopLayout() {
               </div>
 
               {conflicts.length > 0 && (
-                <div className="pt-3 mt-3 border-t border-border">
-                  <p className="eyebrow text-destructive mb-2">
-                    Konflikter · {conflicts.length}
-                  </p>
+                <div className="pt-3 mt-3 border-t border-border/40">
+                  <p className="eyebrow text-destructive mb-2">Konflikter · {conflicts.length}</p>
                   <ul className="space-y-1.5">
                     {conflicts.slice(0, 5).map((c, i) => (
                       <li
                         key={i}
-                        className={`text-[11px] flex items-start gap-1.5 ${
-                          c.level === 'error' ? 'text-destructive' : 'text-amber-500'
-                        }`}
+                        className={`text-[11px] flex items-start gap-1.5 ${c.level === 'error' ? 'text-destructive' : 'text-amber-500'}`}
                       >
                         <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
                         <span>{c.message}</span>
@@ -207,43 +213,66 @@ export default function DesktopLayout() {
             </div>
           </aside>
 
-          {/* Tables grid */}
           <main className="overflow-y-auto scrollbar-thin">
             <div className="p-6">
-              <div className="grid grid-cols-3 xl:grid-cols-4 gap-3">
-                {tables.map((t) => (
-                  <DesktopTableCard
-                    key={t.id}
-                    table={t}
-                    guests={guests}
-                    assignments={assignments}
-                    onGuestClick={(g) => setSelectedGuest(selectedGuestId === g.id ? null : g.id)}
-                    onGuestEdit={(g) => setEditGuest(g)}
-                  />
-                ))}
-                <button
-                  type="button"
-                  onClick={() => addTable()}
-                  className="rounded-lg border-2 border-dashed border-border/60 text-muted-foreground p-4 flex flex-col items-center justify-center gap-1 hover:border-primary/60 hover:text-primary transition-colors min-h-[120px]"
-                >
-                  <Plus className="h-5 w-5" />
-                  <span className="text-xs">Legg til bord</span>
-                </button>
-              </div>
+              {view === 'cards' ? (
+                <div className="grid grid-cols-3 xl:grid-cols-4 gap-3">
+                  {tables.map((t) => (
+                    <DesktopTableCard
+                      key={t.id}
+                      table={t}
+                      guests={guests}
+                      assignments={assignments}
+                      onGuestClick={(g) => setSelectedGuest(selectedGuestId === g.id ? null : g.id)}
+                      onGuestEdit={(g) => setEditGuest(g)}
+                    />
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addTable()}
+                    className="rounded-lg border-2 border-dashed border-border/40 text-muted-foreground p-4 flex flex-col items-center justify-center gap-1 hover:border-primary/60 hover:text-primary transition-colors min-h-[120px]"
+                  >
+                    <Plus className="h-5 w-5" />
+                    <span className="text-xs">Legg til bord</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 xl:grid-cols-4 gap-6">
+                  {tables.map((t) => (
+                    <div
+                      key={t.id}
+                      onClick={() => {
+                        if (selectedGuestId) assignGuest(selectedGuestId, t.id)
+                      }}
+                      className="rounded-xl border border-border/40 bg-card/60 p-3 flex items-center justify-center cursor-pointer hover:border-primary/40 transition-colors"
+                    >
+                      <RoundTable
+                        table={t}
+                        guests={guests}
+                        assignments={assignments}
+                        size={220}
+                        highlightGuestId={selectedGuestId}
+                        onSeatClick={(g) =>
+                          g && setSelectedGuest(selectedGuestId === g.id ? null : g.id)
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </main>
         </div>
 
-        {/* Selected guest pill (floating) */}
         {selectedGuestId && !draggingGuest && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-popover border border-primary rounded-full shadow-lg px-4 py-2 flex items-center gap-3 z-30 animate-slide-up">
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-popover/95 backdrop-blur-md border border-primary/60 rounded-full shadow-lg px-4 py-2 flex items-center gap-3 z-30 animate-slide-up">
             {(() => {
               const g = guests.find((x) => x.id === selectedGuestId)
               if (!g) return null
               return (
                 <>
                   <GuestDot group={g.group_tag} size={8} />
-                  <span className="text-sm font-medium">{g.name}</span>
+                  <span className="text-sm font-medium text-foreground">{g.name}</span>
                   <span className="text-xs text-muted-foreground">Klikk et bord for å flytte</span>
                   <button
                     onClick={() => setSelectedGuest(null)}
